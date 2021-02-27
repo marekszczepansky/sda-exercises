@@ -15,6 +15,9 @@ public class Comment {
     @ManyToOne
     private Post post;
 
+    public Comment() {
+    }
+
     public Comment(String message, LocalDateTime created, User author, Post post) {
         this.message = message;
         this.created = created;

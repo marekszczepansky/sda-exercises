@@ -19,7 +19,7 @@ public class UserController {
     @GetMapping
     public List<User> getUsers(){
         return userList;
-    };
+    }
 
     @GetMapping("{id}")
     public User getUser(@PathVariable Integer id){
@@ -27,11 +27,10 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestParam String name){
-        final User user = new User(name);
+    public User createUser(@RequestBody User user){
         user.setId(userList.size());
         userList.add(user);
         return user;
-    };
+    }
 
 }

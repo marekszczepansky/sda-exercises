@@ -13,6 +13,9 @@ public class Post {
     @ManyToOne
     private User author;
 
+    public Post() {
+    }
+
     public Post(String message, LocalDateTime created, User author) {
         this.message = message;
         this.created = created;
