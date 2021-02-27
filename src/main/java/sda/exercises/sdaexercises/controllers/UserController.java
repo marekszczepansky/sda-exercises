@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteUser(@PathVariable Integer id) {
+    public void deleteUser(@PathVariable int id) {
         userList.remove(id);
     }
 
