@@ -1,5 +1,7 @@
 package sda.exercises.sdaexercises.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -12,6 +14,7 @@ public class Comment {
     private LocalDateTime created;
     @ManyToOne
     private User author;
+    @JsonIgnore
     @ManyToOne
     private Post post;
 
