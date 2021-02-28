@@ -8,7 +8,6 @@ import sda.exercises.sdaexercises.repositories.UserRepository;
 import sda.exercises.sdaexercises.services.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,7 +19,7 @@ public class DefaultUserService implements UserService {
         this.userRepository = userRepository;
     }
 
-    private static EntityNotFoundException getUserNotFoundExceptoin() {
+    private static EntityNotFoundException getUserNotFoundException() {
         return new EntityNotFoundException("User not found");
     }
 
@@ -38,7 +37,7 @@ public class DefaultUserService implements UserService {
     @Override
     public User getUser(Integer id) {
         return userRepository.findById(id)
-                .orElseThrow(DefaultUserService::getUserNotFoundExceptoin);
+                .orElseThrow(DefaultUserService::getUserNotFoundException);
     }
 
     @Override
@@ -49,7 +48,7 @@ public class DefaultUserService implements UserService {
     @Override
     public User updateUser(Integer id, User user) {
         User dbUser = userRepository.findById(id)
-                .orElseThrow(DefaultUserService::getUserNotFoundExceptoin);
+                .orElseThrow(DefaultUserService::getUserNotFoundException);
         dbUser.setName(user.getName());
         return userRepository.save(dbUser);
     }
