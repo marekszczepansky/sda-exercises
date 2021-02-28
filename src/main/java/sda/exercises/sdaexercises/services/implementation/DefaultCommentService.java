@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
 import sda.exercises.sdaexercises.model.Comment;
 import sda.exercises.sdaexercises.model.Post;
 import sda.exercises.sdaexercises.model.User;
@@ -15,6 +16,9 @@ import sda.exercises.sdaexercises.services.CommentService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static sda.exercises.sdaexercises.exceptions.EntityNotFoundException.EntityType.BUSINESS;
+import static sda.exercises.sdaexercises.exceptions.EntityNotFoundException.EntityType.SECURITY;
 
 @Transactional(readOnly = true)
 @Service
@@ -44,17 +48,17 @@ public class DefaultCommentService implements CommentService {
     public Comment createCommentForPost(Integer postId, Integer userId, Comment comment) {
         final Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new EntityNotFoundException("User not found", SECURITY);
         }
         final Optional<Post> postOptional = postRepository.findById(postId);
         if (postOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new EntityNotFoundException("Post not found", BUSINESS);
         }
 
         comment.setAuthor(userOptional.get());
         comment.setPost(postOptional.get());
         comment.setCreated(LocalDateTime.now());
-        return commentRepository.save(comment);
+        return commentRepository.saveAndFlush(comment);
     }
 
     @Override
@@ -76,6 +80,6 @@ public class DefaultCommentService implements CommentService {
         if (commentOptional.isEmpty()) return commentOptional;
         comment = commentOptional.get();
         comment.setMessage(newMessage);
-        return Optional.of(commentRepository.saveAndFlush(comment));
+        return Optional.of(commentRepository.save(comment));
     }
 }
