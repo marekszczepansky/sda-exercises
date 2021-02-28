@@ -46,7 +46,7 @@ public class DefaultCommentService implements CommentService {
     @Transactional(readOnly = false)
     public Comment createCommentForPost(Integer postId, Integer userId, Comment comment) {
         final User author = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 

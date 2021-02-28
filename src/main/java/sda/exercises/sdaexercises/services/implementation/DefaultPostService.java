@@ -46,7 +46,7 @@ public class DefaultPostService implements PostService {
     @Transactional(readOnly = false)
     public Post createPost(Post post, Integer userId) {
         final User author = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         post.setAuthor(author);
         post.setCreated(LocalDateTime.now());
         return postRepository.saveAndFlush(post);
