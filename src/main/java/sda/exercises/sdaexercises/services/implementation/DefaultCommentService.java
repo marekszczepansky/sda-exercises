@@ -1,10 +1,9 @@
 package sda.exercises.sdaexercises.services.implementation;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
+import sda.exercises.sdaexercises.exceptions.UserNotFoundException;
 import sda.exercises.sdaexercises.model.Comment;
 import sda.exercises.sdaexercises.model.Post;
 import sda.exercises.sdaexercises.model.User;
@@ -15,10 +14,6 @@ import sda.exercises.sdaexercises.services.CommentService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
-import static sda.exercises.sdaexercises.exceptions.EntityNotFoundException.EntityType.BUSINESS;
-import static sda.exercises.sdaexercises.exceptions.EntityNotFoundException.EntityType.SECURITY;
 
 @Transactional(readOnly = true)
 @Service
@@ -37,6 +32,10 @@ public class DefaultCommentService implements CommentService {
         this.userRepository = userRepository;
     }
 
+    private static EntityNotFoundException getCommentNotFoundException() {
+        return new EntityNotFoundException("Comment not found");
+    }
+
 
     @Override
     public List<Comment> getCommentsForPost(Integer postId) {
@@ -46,24 +45,21 @@ public class DefaultCommentService implements CommentService {
     @Override
     @Transactional(readOnly = false)
     public Comment createCommentForPost(Integer postId, Integer userId, Comment comment) {
-        final Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("User not found", SECURITY);
-        }
-        final Optional<Post> postOptional = postRepository.findById(postId);
-        if (postOptional.isEmpty()) {
-            throw new EntityNotFoundException("Post not found", BUSINESS);
-        }
+        final User author = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        final Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
-        comment.setAuthor(userOptional.get());
-        comment.setPost(postOptional.get());
+        comment.setAuthor(author);
+        comment.setPost(post);
         comment.setCreated(LocalDateTime.now());
         return commentRepository.saveAndFlush(comment);
     }
 
     @Override
-    public Optional<Comment> getComment(Integer id) {
-        return commentRepository.findById(id);
+    public Comment getComment(Integer id) {
+        return commentRepository.findById(id)
+                .orElseThrow(DefaultCommentService::getCommentNotFoundException);
     }
 
     @Override
@@ -74,12 +70,10 @@ public class DefaultCommentService implements CommentService {
 
     @Override
     @Transactional(readOnly = false)
-    public Optional<Comment> editComment(Integer id, Comment comment) {
-        final String newMessage = comment.getMessage();
-        final Optional<Comment> commentOptional = commentRepository.findById(id);
-        if (commentOptional.isEmpty()) return commentOptional;
-        comment = commentOptional.get();
-        comment.setMessage(newMessage);
-        return Optional.of(commentRepository.save(comment));
+    public Comment editComment(Integer id, Comment comment) {
+        Comment dbComment = commentRepository.findById(id)
+                .orElseThrow(DefaultCommentService::getCommentNotFoundException);
+        dbComment.setMessage(comment.getMessage());
+        return commentRepository.save(dbComment);
     }
 }

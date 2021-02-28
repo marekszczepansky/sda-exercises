@@ -1,11 +1,14 @@
 package sda.exercises.sdaexercises.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
 import sda.exercises.sdaexercises.model.User;
-import sda.exercises.sdaexercises.repositories.UserRepository;
+import sda.exercises.sdaexercises.services.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * localhost:8080/users - lista użytkowników, POST
@@ -15,36 +18,35 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
     public List<User> getUsers() {
-        return userRepository.findAll();
+        return userService.getUsers();
     }
 
     @GetMapping("{id}")
     public User getUser(@PathVariable Integer id) {
-        return userRepository.findById(id).orElse(null);
+        return userService.getUser(id);
     }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        return userRepository.saveAndFlush(user);
+        return userService.createUser(user);
     }
 
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable int id) {
-        userRepository.deleteById(id);
+        userService.deleteUser(id);
     }
 
     @PutMapping("{id}")
     public User updateUser(@PathVariable Integer id, @RequestBody User user) {
-        user.setId(id);
-        return userRepository.saveAndFlush(user);
+        return userService.updateUser(id, user);
     }
-
 }
