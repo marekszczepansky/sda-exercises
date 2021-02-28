@@ -5,7 +5,6 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
-import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
 import sda.exercises.sdaexercises.exceptions.NoUserHeaderException;
 import sda.exercises.sdaexercises.exceptions.UserNotFoundException;
 import sda.exercises.sdaexercises.services.UserService;
