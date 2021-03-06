@@ -1,5 +1,6 @@
 package sda.exercises.sdaexercises.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sda.exercises.sdaexercises.controllers.security.UserGuard;
 import sda.exercises.sdaexercises.model.User;
@@ -36,6 +37,7 @@ public class UserController {
 
     @UserGuard
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }

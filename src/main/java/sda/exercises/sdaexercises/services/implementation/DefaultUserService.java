@@ -1,5 +1,6 @@
 package sda.exercises.sdaexercises.services.implementation;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
@@ -41,11 +42,17 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void deleteUser(Integer id) {
-        userRepository.deleteById(id);
+        try {
+            userRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("User does not exist");
+        }
     }
 
     @Override
+    @Transactional(readOnly = false)
     public User updateUser(Integer id, User user) {
         User dbUser = userRepository.findById(id)
                 .orElseThrow(DefaultUserService::getUserNotFoundException);
