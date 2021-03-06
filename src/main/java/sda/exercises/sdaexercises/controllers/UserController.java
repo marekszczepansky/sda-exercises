@@ -44,6 +44,7 @@ public class UserController {
 
     @UserGuard
     @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
     }

@@ -97,7 +97,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldReturn404ForUnknownUserId() throws Exception {
+    void shouldNotGetUnknownUserId() throws Exception {
         final int testUserId = 11;
         when(userService.getUser(testUserId)).thenThrow(EntityNotFoundException.class);
 
@@ -114,7 +114,7 @@ class UserControllerTest {
                 delete("/users/{id}", testUserId).header("userId", "1")
         )
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -145,7 +145,20 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(testUserId)))
                 .andExpect(jsonPath("$.name", is(updatedUserName)));
+    }
 
+    @Test
+    void shouldNotUpdateUnknownUserId() throws Exception {
+        final int testUserId = 3;
+        when(userService.updateUser(eq(testUserId), any(User.class))).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(
+                put("/users/{id}", testUserId)
+                        .header("userId", "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"name\" : \"Ignored test name\" }"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     private User createUserWithId(String testUserName, Integer testUserId) {
