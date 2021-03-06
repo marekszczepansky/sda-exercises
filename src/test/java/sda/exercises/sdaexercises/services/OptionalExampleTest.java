@@ -16,7 +16,7 @@ class OptionalExampleTest {
     @BeforeEach
     void setUp() {
         optionalExample = new OptionalExample();
-        List.of("Marek", "Beata", "Mikołaj", "Miłosz", "Marzena", "Zosia", "Joanna", "Daniel", "Monika")
+        List.of("Marek", "Maciej", "Mikołaj", "Miłosz", "Marzena", "Zosia", "Joanna", "Daniel", "Monika")
                 .stream()
                 .map(User::new)
                 .forEach(optionalExample::add);
