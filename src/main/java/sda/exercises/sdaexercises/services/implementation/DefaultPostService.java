@@ -3,14 +3,13 @@ package sda.exercises.sdaexercises.services.implementation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
-import sda.exercises.sdaexercises.exceptions.UserNotFoundException;
 import sda.exercises.sdaexercises.model.Post;
 import sda.exercises.sdaexercises.model.User;
 import sda.exercises.sdaexercises.repositories.PostRepository;
 import sda.exercises.sdaexercises.repositories.UserRepository;
 import sda.exercises.sdaexercises.services.PostService;
+import sda.exercises.sdaexercises.services.TimeService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,13 +17,16 @@ import java.util.List;
 public class DefaultPostService implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final TimeService timeService;
 
     public DefaultPostService(
             PostRepository postRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            TimeService timeService
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.timeService = timeService;
     }
 
     private static EntityNotFoundException getPostNotFoundException() {
@@ -48,7 +50,7 @@ public class DefaultPostService implements PostService {
         final User author = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         post.setAuthor(author);
-        post.setCreated(LocalDateTime.now());
+        post.setCreated(timeService.getNow());
         return postRepository.saveAndFlush(post);
     }
 

@@ -3,7 +3,6 @@ package sda.exercises.sdaexercises.services.implementation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
-import sda.exercises.sdaexercises.exceptions.UserNotFoundException;
 import sda.exercises.sdaexercises.model.Comment;
 import sda.exercises.sdaexercises.model.Post;
 import sda.exercises.sdaexercises.model.User;
@@ -11,6 +10,7 @@ import sda.exercises.sdaexercises.repositories.CommentRepository;
 import sda.exercises.sdaexercises.repositories.PostRepository;
 import sda.exercises.sdaexercises.repositories.UserRepository;
 import sda.exercises.sdaexercises.services.CommentService;
+import sda.exercises.sdaexercises.services.TimeService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,15 +21,18 @@ public class DefaultCommentService implements CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final TimeService timeService;
 
     public DefaultCommentService(
             CommentRepository commentRepository,
             PostRepository postRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            TimeService timeService
     ) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.timeService = timeService;
     }
 
     private static EntityNotFoundException getCommentNotFoundException() {
@@ -52,7 +55,7 @@ public class DefaultCommentService implements CommentService {
 
         comment.setAuthor(author);
         comment.setPost(post);
-        comment.setCreated(LocalDateTime.now());
+        comment.setCreated(timeService.getNow());
         return commentRepository.saveAndFlush(comment);
     }
 
