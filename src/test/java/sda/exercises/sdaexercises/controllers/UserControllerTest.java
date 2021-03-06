@@ -115,6 +115,8 @@ class UserControllerTest {
         )
                 .andDo(print())
                 .andExpect(status().isNoContent());
+
+        verify(userService, times(1)).deleteUser(testUserId);
     }
 
     @Test
