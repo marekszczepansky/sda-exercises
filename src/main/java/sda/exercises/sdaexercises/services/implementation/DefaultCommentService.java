@@ -2,7 +2,8 @@ package sda.exercises.sdaexercises.services.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
+import sda.exercises.sdaexercises.exceptions.ExerciseException;
+import sda.exercises.sdaexercises.exceptions.ExerciseExceptionFactory;
 import sda.exercises.sdaexercises.model.Comment;
 import sda.exercises.sdaexercises.model.Post;
 import sda.exercises.sdaexercises.model.User;
@@ -12,7 +13,6 @@ import sda.exercises.sdaexercises.repositories.UserRepository;
 import sda.exercises.sdaexercises.services.CommentService;
 import sda.exercises.sdaexercises.services.TimeService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -35,8 +35,8 @@ public class DefaultCommentService implements CommentService {
         this.timeService = timeService;
     }
 
-    private static EntityNotFoundException getCommentNotFoundException() {
-        return new EntityNotFoundException("Comment not found");
+    private static ExerciseException getCommentNotFoundException() {
+        return ExerciseExceptionFactory.createEntityNotFound("Comment not found");
     }
 
 
@@ -49,9 +49,9 @@ public class DefaultCommentService implements CommentService {
     @Transactional(readOnly = false)
     public Comment createCommentForPost(Integer postId, Integer userId, Comment comment) {
         final User author = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> ExerciseExceptionFactory.createEntityNotFound("User not found"));
         final Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+                .orElseThrow(() -> ExerciseExceptionFactory.createEntityNotFound("Post not found"));
 
         comment.setAuthor(author);
         comment.setPost(post);

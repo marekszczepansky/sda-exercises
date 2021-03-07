@@ -3,7 +3,8 @@ package sda.exercises.sdaexercises.services.implementation;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
+import sda.exercises.sdaexercises.exceptions.ExerciseException;
+import sda.exercises.sdaexercises.exceptions.ExerciseExceptionFactory;
 import sda.exercises.sdaexercises.model.User;
 import sda.exercises.sdaexercises.repositories.UserRepository;
 import sda.exercises.sdaexercises.services.UserService;
@@ -20,8 +21,8 @@ public class DefaultUserService implements UserService {
         this.userRepository = userRepository;
     }
 
-    private static EntityNotFoundException getUserNotFoundException() {
-        return new EntityNotFoundException("User not found");
+    private static ExerciseException getUserNotFoundException() {
+        return ExerciseExceptionFactory.createEntityNotFound("User not found");
     }
 
     @Override
@@ -47,7 +48,7 @@ public class DefaultUserService implements UserService {
         try {
             userRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("User does not exist");
+            throw ExerciseExceptionFactory.createEntityNotFound("User does not exist");
         }
     }
 

@@ -2,7 +2,8 @@ package sda.exercises.sdaexercises.services.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sda.exercises.sdaexercises.exceptions.EntityNotFoundException;
+import sda.exercises.sdaexercises.exceptions.ExerciseException;
+import sda.exercises.sdaexercises.exceptions.ExerciseExceptionFactory;
 import sda.exercises.sdaexercises.model.Post;
 import sda.exercises.sdaexercises.model.User;
 import sda.exercises.sdaexercises.repositories.PostRepository;
@@ -29,8 +30,8 @@ public class DefaultPostService implements PostService {
         this.timeService = timeService;
     }
 
-    private static EntityNotFoundException getPostNotFoundException() {
-        return new EntityNotFoundException("Post not found");
+    private static ExerciseException getPostNotFoundException() {
+        return ExerciseExceptionFactory.createEntityNotFound("Post not found");
     }
 
     @Override
@@ -48,7 +49,7 @@ public class DefaultPostService implements PostService {
     @Transactional(readOnly = false)
     public Post createPost(Post post, Integer userId) {
         final User author = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> ExerciseExceptionFactory.createEntityNotFound("User not found"));
         post.setAuthor(author);
         post.setCreated(timeService.getNow());
         return postRepository.saveAndFlush(post);

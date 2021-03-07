@@ -1,6 +1,6 @@
 package sda.exercises.sdaexercises.exceptions;
 
-public class UserNotFoundException extends RuntimeException {
+public class UserNotFoundException extends ExerciseException {
     public UserNotFoundException(String message) {
         super(message);
     }

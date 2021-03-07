@@ -11,8 +11,7 @@ import sda.exercises.sdaexercises.controllers.security.observable.DefaultGuardEv
 import sda.exercises.sdaexercises.controllers.security.observable.GuardEvent.EventType;
 import sda.exercises.sdaexercises.controllers.security.observable.UserGuardObservable;
 import sda.exercises.sdaexercises.controllers.security.observable.UserGuardObserver;
-import sda.exercises.sdaexercises.exceptions.NoUserHeaderException;
-import sda.exercises.sdaexercises.exceptions.UserNotFoundException;
+import sda.exercises.sdaexercises.exceptions.ExerciseExceptionFactory;
 import sda.exercises.sdaexercises.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,14 +35,14 @@ public class UserGuardAdvice implements UserGuardObservable {
         final String userIdHeader = request.getHeader("userId");
         if (userIdHeader == null) {
             notifyObservers(EventType.UNDEFINED, null);
-            throw new NoUserHeaderException("Empty userId header");
+            throw ExerciseExceptionFactory.createNoUserHeader("Empty userId header");
         }
         try {
             userService.getUser(Integer.valueOf(userIdHeader));
             notifyObservers(EventType.PASSED, userIdHeader);
         } catch (Exception exception) {
             notifyObservers(EventType.FORBIDDEN, userIdHeader);
-            throw new UserNotFoundException("User not found");
+            throw ExerciseExceptionFactory.createUserNotFound("User not found");
         }
     };
 
