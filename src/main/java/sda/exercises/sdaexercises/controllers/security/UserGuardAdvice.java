@@ -2,6 +2,8 @@ package sda.exercises.sdaexercises.controllers.security;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ import java.util.Set;
 @Aspect
 @Component
 public class UserGuardAdvice implements UserGuardObservable {
+    private static Logger logger = LoggerFactory.getLogger(UserGuardAdvice.class);
     private final Set<UserGuardObserver> userGuardObservers = new HashSet<>();
 
     @Autowired
@@ -47,16 +50,22 @@ public class UserGuardAdvice implements UserGuardObservable {
     @Override
     public void addObserver(UserGuardObserver userGuardObserver) {
         userGuardObservers.add(userGuardObserver);
+        logger.info("Observer {} registered", userGuardObserver.getClass().getSimpleName());
     }
 
     @Override
     public void removeObserver(UserGuardObserver userGuardObserver) {
         userGuardObservers.remove(userGuardObserver);
+        logger.info("Observer {} removed", userGuardObserver.getClass().getSimpleName());
     }
 
     private void notifyObservers(EventType eventType, String userIdHeader){
+        final String requestURI = request.getRequestURI();
+        final String method = request.getMethod();
         final DefaultGuardEvent guardEvent = new DefaultGuardEvent.Builder(eventType)
                 .withUserId(userIdHeader)
+                .withRequestMethod(method)
+                .withRequestPath(requestURI)
                 .build();
         userGuardObservers.forEach(userGuardObserver -> userGuardObserver.update(guardEvent));
     }

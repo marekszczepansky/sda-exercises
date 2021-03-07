@@ -8,4 +8,8 @@ public interface GuardEvent {
     EventType getEventType();
 
     String getUserId();
+
+    String getRequestPath();
+
+    String getRequestMethod();
 }
