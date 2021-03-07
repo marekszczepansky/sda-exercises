@@ -70,4 +70,19 @@ public class DefaultGuardEvent implements GuardEvent {
             return this;
         }
     }
+
+    // Factory method(s)
+    public static DefaultGuardEvent of(EventType eventType, String userId, String requestMethod, String requestPath) {
+        return new Builder(eventType)
+                .withUserId(userId)
+                .withRequestMethod(requestMethod)
+                .withRequestPath(requestPath)
+                .build();
+    }
+
+    public static DefaultGuardEvent of(EventType eventType, String userId) {
+        return new Builder(eventType)
+                .withUserId(userId)
+                .build();
+    }
 }

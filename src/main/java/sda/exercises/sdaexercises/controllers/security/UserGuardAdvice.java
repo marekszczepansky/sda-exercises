@@ -36,7 +36,7 @@ public class UserGuardAdvice implements UserGuardObservable {
         final String userIdHeader = request.getHeader("userId");
         if (userIdHeader == null) {
             notifyObservers(EventType.UNDEFINED, null);
-            throw new NoUserHeaderException();
+            throw new NoUserHeaderException("Empty userId header");
         }
         try {
             userService.getUser(Integer.valueOf(userIdHeader));
@@ -67,6 +67,9 @@ public class UserGuardAdvice implements UserGuardObservable {
                 .withRequestMethod(method)
                 .withRequestPath(requestURI)
                 .build();
+//        Factory equivalent
+//        final DefaultGuardEvent guardEventFromFactory =
+//                DefaultGuardEvent.of(eventType, userIdHeader, method, requestURI);
         userGuardObservers.forEach(userGuardObserver -> userGuardObserver.update(guardEvent));
     }
 }
