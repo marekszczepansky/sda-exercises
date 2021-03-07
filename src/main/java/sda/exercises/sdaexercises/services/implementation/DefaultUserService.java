@@ -1,5 +1,6 @@
 package sda.exercises.sdaexercises.services.implementation;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import sda.exercises.sdaexercises.services.UserService;
 import java.util.List;
 
 @Service
+@Primary
 @Transactional(readOnly = true)
 public class DefaultUserService implements UserService {
 

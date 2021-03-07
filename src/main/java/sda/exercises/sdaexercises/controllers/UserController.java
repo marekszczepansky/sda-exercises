@@ -1,5 +1,7 @@
 package sda.exercises.sdaexercises.controllers;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sda.exercises.sdaexercises.controllers.security.UserGuard;
@@ -19,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
 
-    public UserController(UserService userService) {
+    public UserController(@Qualifier("UserServiceProxy") UserService userService) {
         this.userService = userService;
     }
 
